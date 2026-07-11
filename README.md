@@ -1,203 +1,147 @@
 # 🚀 Engineering for Failure: Building a Highly Available Docker Swarm Cluster on AWS with Terraform
 
+
 ![AWS](https://img.shields.io/badge/AWS-EC2-FF9900?logo=amazonaws&logoColor=white)
 ![Terraform](https://img.shields.io/badge/Terraform-IaC-623CE4?logo=terraform&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Swarm-2496ED?logo=docker&logoColor=white)
 ![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04-E95420?logo=ubuntu&logoColor=white)
 ![Linux](https://img.shields.io/badge/Linux-Bash-FCC624?logo=linux&logoColor=black)
 ![GitHub](https://img.shields.io/badge/GitHub-Version_Control-181717?logo=github&logoColor=white)
+![CloudWatch](https://img.shields.io/badge/Amazon_CloudWatch-Monitoring-FF4F8B)
 
-> **A production-style high availability project demonstrating Docker
-> Swarm, Terraform, AWS, and fault tolerance through real-world failure
-> scenarios.**
+> Production-inspired Docker Swarm project demonstrating high availability, self-healing, leader election, and lightweight EC2 observability.
 
-------------------------------------------------------------------------
+## 📑 Table of Contents
+1. Business Problem
+2. Project Objectives
+3. Solution Architecture
+4. Technology Stack
+5. Repository Structure
+6. Deployment Guide
+7. High Availability Testing
+8. CloudWatch Dashboard
+9. Validation
+10. Interview Talking Points
+11. Lessons Learned
+12. Future Enhancements
 
-# 📑 Table of Contents
+## 💼 Business Problem
+Modern production systems must continue serving users when infrastructure components fail. This project demonstrates Docker Swarm self-healing while using a lightweight Amazon CloudWatch dashboard built from native EC2 metrics to visualize infrastructure health.
 
-1.  Business Problem
-2.  Project Objectives
-3.  Solution Architecture
-4.  Technology Stack
-5.  Repository Structure
-6.  Deployment Guide
-7.  Failure Scenarios
-8.  Validation Commands
-9.  Interview Talking Points
-10. Lessons Learned
-11. Future Enhancements
+## 🎯 Project Objectives
+- Provision AWS infrastructure with Terraform
+- Deploy a 3 Manager / 2 Worker Docker Swarm cluster
+- Automatically install Docker with user_data
+- Demonstrate container, worker, and manager failures
+- Monitor infrastructure with a CloudWatch Dashboard
+- Document deployment and recovery procedures
 
-------------------------------------------------------------------------
+## 🏗️ Solution Architecture
 
-# 💼 Business Problem
+```text
+Internet
+    │
+Docker Routing Mesh
+    │
+Manager1 (Leader)
+ ├── Manager2
+ ├── Manager3
+ ├── Worker1
+ └── Worker2
 
-Modern applications must remain available even when containers, servers,
-or management nodes fail. This project demonstrates how Docker Swarm
-maintains application availability through self-healing, workload
-rescheduling, and manager leader election using Infrastructure as Code
-on AWS.
+Docker Service (3 Replicas)
 
-------------------------------------------------------------------------
-
-# 🎯 Project Objectives
-
--   Provision AWS infrastructure with Terraform
--   Build a **3 Manager / 2 Worker** Docker Swarm cluster
--   Deploy a custom Docker image
--   Demonstrate:
-    -   Container self-healing
-    -   Worker node recovery
-    -   Manager leader election
--   Explain quorum and Raft consensus
--   Document operational procedures like an SRE runbook
-
-------------------------------------------------------------------------
-
-# 🏗️ Solution Architecture
-
-``` text
-                    Internet
-                        │
-                 Docker Routing Mesh
-                        │
-      ┌─────────────────┴─────────────────┐
-      │                                   │
- Manager1 (Leader)                  Manager2
-              │
-          Manager3
-          /      \
-     Worker1   Worker2
-
-Service: novatech-web
-Replicas: 3
+Amazon CloudWatch Dashboard
+• CPU Utilization
+• Status Checks
+• Network In
+• Network Out
 ```
 
-------------------------------------------------------------------------
+## 🛠️ Technology Stack
 
-# 🛠️ Technology Stack
+| Category | Technology |
+|-----------|------------|
+| Cloud | AWS EC2, VPC, Security Groups, CloudWatch |
+| IaC | Terraform |
+| Containers | Docker Swarm |
+| OS | Ubuntu 22.04 |
+| Automation | Bash |
+| Monitoring | Native EC2 Metrics |
 
-  Category         Technology
-  ---------------- -------------------------------
-  Cloud            AWS EC2, VPC, Security Groups
-  IaC              Terraform
-  Containers       Docker Engine, Docker Swarm
-  OS               Ubuntu 22.04
-  Automation       Bash
-  Source Control   Git & GitHub
+## 📂 Repository Structure
 
-------------------------------------------------------------------------
-
-# 📂 Repository Structure
-
-``` text
-engineering-for-failure-docker-swarm/
-├── terraform/
-├── scripts/
-├── diagrams/
-├── screenshots/
-├── README.md
-└── LICENSE
+```text
+terraform/
+├── providers.tf
+├── variables.tf
+├── main.tf
+├── outputs.tf
+└── docker_install.sh
 ```
 
-------------------------------------------------------------------------
+## 🚀 Deployment Guide
+1. terraform init
+2. terraform validate
+3. terraform plan
+4. terraform apply
+5. Initialize Docker Swarm
+6. Join managers
+7. Join workers
+8. Deploy the service
 
-# 🚀 Deployment Guide
+## 💥 High Availability Testing
+- Container failure → Swarm recreates the container.
+- Worker failure → Swarm reschedules workloads.
+- Manager failure → New leader elected automatically.
 
-### Phase 1 -- Provision Infrastructure
+## 📊 CloudWatch Dashboard
 
-1.  `terraform init`
-2.  `terraform validate`
-3.  `terraform plan`
-4.  `terraform apply`
+This project intentionally includes **one lightweight CloudWatch Dashboard** using native EC2 metrics only.
 
-### Phase 2 -- Configure Docker Swarm
+Widgets:
+- CPU Utilization
+- Status Checks
+- Network In
+- Network Out
 
-1.  Install Docker on all EC2 instances.
-2.  Initialize Swarm on Manager1.
-3.  Join Manager2 and Manager3.
-4.  Join Worker1 and Worker2.
-5.  Verify:
-    -   `docker node ls`
+No CloudWatch Agent, Container Insights, SNS, or custom metrics are used to keep the project focused on Docker Swarm rather than observability.
 
-### Phase 3 -- Deploy the Application
+## ✅ Validation
 
-``` bash
-docker service create \
-  --name novatech-web \
-  --replicas 3 \
-  -p 80:80 \
-  kevd637/novatech_ubuntu_server
 ```
-
-Verify: - `docker service ls` - `docker service ps novatech-web`
-
-------------------------------------------------------------------------
-
-# 💥 Failure Scenarios
-
-## 1️⃣ Container Failure
-
--   Kill a running container.
--   Swarm automatically launches a replacement.
-
-## 2️⃣ Worker Node Failure
-
--   Shut down a worker.
--   Swarm reschedules workloads to healthy nodes.
-
-## 3️⃣ Manager Failure
-
--   Shut down the leader.
--   Remaining managers maintain quorum.
--   Observe automatic leader election.
-
-------------------------------------------------------------------------
-
-# ✅ Validation Commands
-
-``` bash
 docker node ls
 docker service ls
 docker service ps novatech-web
 docker ps
 ```
 
-Capture screenshots before and after every failure.
+Capture screenshots before and after each failure, including the CloudWatch Dashboard.
 
-------------------------------------------------------------------------
+## 🎤 Interview Talking Points
 
-# 🎤 Interview Talking Points
+- Why three managers?
+- How does quorum work?
+- Difference between container and node failure.
+- Why use native CloudWatch metrics instead of Container Insights?
+- How would you evolve this into Kubernetes?
 
--   Why are three managers preferred over two?
--   What is quorum?
--   How does Raft maintain consistency?
--   Difference between container and node failures.
--   Why Infrastructure as Code improves reliability.
--   How Docker Swarm differs from Kubernetes.
+## 🎓 Lessons Learned
 
-------------------------------------------------------------------------
+- Design for failure.
+- Automate infrastructure.
+- Keep project scope focused.
+- Native EC2 metrics provide useful operational visibility with minimal complexity.
 
-# 🎓 Lessons Learned
+## 📈 Future Enhancements
 
--   High availability requires planning for failure.
--   Containers are disposable; services are resilient.
--   Automation reduces operational risk.
--   Distributed systems rely on consensus.
+- GitHub Actions
+- Amazon EKS
+- Prometheus
+- Grafana
+- Container Insights
 
-------------------------------------------------------------------------
+## 👤 Author
 
-# 📈 Future Enhancements
-
--   GitHub Actions deployment
--   CloudWatch observability
--   Prometheus & Grafana
--   Amazon EKS comparison
--   Blue/Green deployments
-
-------------------------------------------------------------------------
-
-# 👤 Author
-
-**Kevin Harding**
-
-Cloud Engineer \| DevOps \| AWS \| Infrastructure Automation
+**Kevin Harding**  
+Cloud Engineer | DevOps | AWS
