@@ -105,11 +105,10 @@ engineering-for-failure-docker-swarm/
 
 ### Phase 1 -- Provision Infrastructure
 
-1.  Configure `terraform.tfvars`
-2.  `terraform init`
-3.  `terraform validate`
-4.  `terraform plan`
-5.  `terraform apply`
+1.  `terraform init`
+2.  `terraform validate`
+3.  `terraform plan`
+4.  `terraform apply`
 
 ### Phase 2 -- Configure Docker Swarm
 
