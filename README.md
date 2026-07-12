@@ -105,8 +105,6 @@ Widgets:
 - Network In
 - Network Out
 
-No CloudWatch Agent, Container Insights, SNS, or custom metrics are used to keep the project focused on Docker Swarm rather than observability.
-
 ## ✅ Validation
 
 ```
@@ -124,7 +122,6 @@ Capture screenshots before and after each failure, including the CloudWatch Dash
 - How does quorum work?
 - Difference between container and node failure.
 - Why use native CloudWatch metrics instead of Container Insights?
-- How would you evolve this into Kubernetes?
 
 ## 🎓 Lessons Learned
 
