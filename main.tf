@@ -196,3 +196,203 @@ resource "aws_instance" "swarm" {
     )
   }
 }
+
+#################################################
+# CloudWatch Dashboard
+#################################################
+
+resource "aws_cloudwatch_dashboard" "docker_swarm" {
+
+  dashboard_name = var.dashboard_name
+
+  dashboard_body = jsonencode({
+
+    widgets = [
+
+      #################################################
+      # CPU Utilization
+      #################################################
+
+      {
+
+        type = "metric"
+
+        x = 0
+
+        y = 0
+
+        width = 12
+
+        height = 6
+
+        properties = {
+
+          title = "EC2 CPU Utilization"
+
+          view = "timeSeries"
+
+          stacked = false
+
+          region = var.aws_region
+
+          metrics = [
+
+            for instance in aws_instance.swarm :
+
+            [
+
+              "AWS/EC2",
+
+              "CPUUtilization",
+
+              "InstanceId",
+
+              instance.id
+
+            ]
+
+          ]
+
+        }
+
+      },
+
+      #################################################
+      # Status Checks
+      #################################################
+
+      {
+
+        type = "metric"
+
+        x = 12
+
+        y = 0
+
+        width = 12
+
+        height = 6
+
+        properties = {
+
+          title = "EC2 Status Checks"
+
+          region = var.aws_region
+
+          view = "timeSeries"
+
+          metrics = [
+
+            for instance in aws_instance.swarm :
+
+            [
+
+              "AWS/EC2",
+
+              "StatusCheckFailed",
+
+              "InstanceId",
+
+              instance.id
+
+            ]
+
+          ]
+
+        }
+
+      },
+
+      #################################################
+      # Network In
+      #################################################
+
+      {
+
+        type = "metric"
+
+        x = 0
+
+        y = 6
+
+        width = 12
+
+        height = 6
+
+        properties = {
+
+          title = "Network In"
+
+          region = var.aws_region
+
+          metrics = [
+
+            for instance in aws_instance.swarm :
+
+            [
+
+              "AWS/EC2",
+
+              "NetworkIn",
+
+              "InstanceId",
+
+              instance.id
+
+            ]
+
+          ]
+
+        }
+
+      },
+
+      #################################################
+      # Network Out
+      #################################################
+
+      {
+
+        type = "metric"
+
+        x = 12
+
+        y = 6
+
+        width = 12
+
+        height = 6
+
+        properties = {
+
+          title = "Network Out"
+
+          region = var.aws_region
+
+          metrics = [
+
+            for instance in aws_instance.swarm :
+
+            [
+
+              "AWS/EC2",
+
+              "NetworkOut",
+
+              "InstanceId",
+
+              instance.id
+
+            ]
+
+          ]
+
+        }
+
+      }
+
+    ]
+
+  })
+
+}
