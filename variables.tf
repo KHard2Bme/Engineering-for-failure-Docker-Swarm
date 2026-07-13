@@ -24,10 +24,6 @@ variable "public_subnet" {
   default = "10.0.1.0/24"
 }
 
-#################################################
-# CloudWatch Dashboard
-#################################################
-
 variable "dashboard_name" {
   description = "CloudWatch Dashboard Name"
   type        = string

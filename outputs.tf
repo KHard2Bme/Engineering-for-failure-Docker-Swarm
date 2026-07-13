@@ -13,10 +13,6 @@ output "instance_names" {
   value = aws_instance.swarm[*].tags.Name
 }
 
-#################################################
-# CloudWatch Dashboard
-#################################################
-
 output "cloudwatch_dashboard" {
 
   value = aws_cloudwatch_dashboard.docker_swarm.dashboard_name
