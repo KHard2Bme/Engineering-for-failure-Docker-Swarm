@@ -47,6 +47,28 @@ Docker installed automatically through `docker_install.sh`
 
 ------------------------------------------------------------------------
 
+# Supporting Scripts
+
+## docker_install.sh
+
+Executed automatically by Terraform using `user_data`, this script
+prepares each EC2 instance by: - Updating the operating system. -
+Installing Docker. - Enabling and starting the Docker service. - Adding
+the `ec2-user` account to the Docker group. - Installing the Docker
+Compose plugin. - Verifying the Docker installation.
+
+## ubuntu_updates.sh
+
+The `ubuntu_updates.sh` script is included as a standalone Linux
+administration example and is **not** executed as part of the Terraform
+deployment because the infrastructure uses Amazon Linux 2023 rather than
+Ubuntu. The script demonstrates common system administration tasks,
+including updating package repositories, upgrading installed packages,
+installing Apache2, enabling the Apache service, starting the service,
+and verifying the installation. It showcases Bash scripting and Linux
+automation skills that are transferable across distributions.
+fileciteturn0file0
+------------------------------------------------------------------------
 # Security
 
 The security group allows:
