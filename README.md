@@ -1,5 +1,4 @@
-# 🚀 Engineering for Failure: Building a Highly Available Docker Swarm Cluster on AWS with Terraform
-
+# Engineering for Failure: Docker Swarm on AWS with Terraform
 
 ![AWS](https://img.shields.io/badge/AWS-EC2-FF9900?logo=amazonaws&logoColor=white)
 ![Terraform](https://img.shields.io/badge/Terraform-IaC-623CE4?logo=terraform&logoColor=white)
@@ -9,136 +8,182 @@
 ![GitHub](https://img.shields.io/badge/GitHub-Version_Control-181717?logo=github&logoColor=white)
 ![CloudWatch](https://img.shields.io/badge/Amazon_CloudWatch-Monitoring-FF4F8B)
 
-> Production-inspired Docker Swarm project demonstrating high availability, self-healing, leader election, and lightweight EC2 observability.
+## Overview
 
-## 📑 Table of Contents
-1. Business Problem
-2. Project Objectives
-3. Solution Architecture
-4. Technology Stack
-5. Repository Structure
-6. Deployment Guide
-7. High Availability Testing
-8. CloudWatch Dashboard
-9. Validation
-10. Interview Talking Points
-11. Lessons Learned
-12. Future Enhancements
+This project provisions a five-node Docker Swarm cluster on AWS using
+Terraform to demonstrate Infrastructure as Code (IaC), AWS networking,
+Linux administration, Docker orchestration, and CloudWatch monitoring.
+The environment is intentionally simple, reproducible, and designed as a
+portfolio project that showcases core DevOps engineering skills.
 
-## 💼 Business Problem
-Modern production systems must continue serving users when infrastructure components fail. This project demonstrates Docker Swarm self-healing while using a lightweight Amazon CloudWatch dashboard built from native EC2 metrics to visualize infrastructure health.
+------------------------------------------------------------------------
 
-## 🎯 Project Objectives
-- Provision AWS infrastructure with Terraform
-- Deploy a 3 Manager / 2 Worker Docker Swarm cluster
-- Automatically install Docker with user_data
-- Demonstrate container, worker, and manager failures
-- Monitor infrastructure with a CloudWatch Dashboard
-- Document deployment and recovery procedures
+# Architecture
 
-## 🏗️ Solution Architecture
+## AWS Region
 
-```text
-Internet
-    │
-Docker Routing Mesh
-    │
-Manager1 (Leader)
- ├── Manager2
- ├── Manager3
- ├── Worker1
- └── Worker2
+-   us-east-1
 
-Docker Service (3 Replicas)
+## Networking
 
-Amazon CloudWatch Dashboard
-• CPU Utilization
-• Status Checks
-• Network In
-• Network Out
+-   VPC: 10.0.0.0/16
+-   Public Subnet A: 10.0.1.0/24 (us-east-1a)
+-   Public Subnet B: 10.0.2.0/24 (us-east-1b)
+-   Internet Gateway
+-   Public Route Table
+
+## EC2 Infrastructure
+
+  Instance   Availability Zone   Role
+  ---------- ------------------- ---------------
+  Manager1   us-east-1a          Swarm Manager
+  Manager2   us-east-1a          Swarm Manager
+  Manager3   us-east-1b          Swarm Manager
+  Worker1    us-east-1a          Swarm Worker
+  Worker2    us-east-1b          Swarm Worker
+
+Each EC2 instance: - Amazon Linux 2023 - t2.micro - Public IP Address -
+Docker installed automatically through `docker_install.sh`
+
+------------------------------------------------------------------------
+
+# Security
+
+The security group allows:
+
+-   TCP 22 (SSH)
+-   TCP 80 (HTTP)
+-   TCP 2377 (Docker Swarm Management)
+-   TCP/UDP 7946 (Cluster Communication)
+-   UDP 4789 (Overlay Networking)
+
+------------------------------------------------------------------------
+
+# Monitoring
+
+A custom Amazon CloudWatch Dashboard provides visibility into:
+
+-   CPU Utilization
+-   Status Checks
+-   Network In
+-   Network Out
+
+This version intentionally does **not** include:
+
+-   CloudWatch Agent
+-   CloudWatch Metric Filters
+-   CloudWatch Alarms
+-   Amazon SNS
+
+------------------------------------------------------------------------
+
+# Repository Structure
+
+-   providers.tf
+-   variables.tf
+-   main.tf
+-   outputs.tf
+-   docker_install.sh
+-   README.md
+
+------------------------------------------------------------------------
+
+# Deployment
+
+Initialize Terraform:
+
+``` bash
+terraform init
 ```
 
-## 🛠️ Technology Stack
+Review the execution plan:
 
-| Category | Technology |
-|-----------|------------|
-| Cloud | AWS EC2, VPC, Security Groups, CloudWatch |
-| IaC | Terraform |
-| Containers | Docker Swarm |
-| OS | Ubuntu 22.04 |
-| Automation | Bash |
-| Monitoring | Native EC2 Metrics |
-
-## 📂 Repository Structure
-
-```text
-terraform/
-├── providers.tf
-├── variables.tf
-├── main.tf
-├── outputs.tf
-└── docker_install.sh
+``` bash
+terraform plan
 ```
 
-## 🚀 Deployment Guide
-1. terraform init
-2. terraform validate
-3. terraform plan
-4. terraform apply
-5. Initialize Docker Swarm
-6. Join managers
-7. Join workers
-8. Deploy the service
+Deploy the infrastructure:
 
-## 💥 High Availability Testing
-- Container failure → Swarm recreates the container.
-- Worker failure → Swarm reschedules workloads.
-- Manager failure → New leader elected automatically.
-
-## 📊 CloudWatch Dashboard
-
-This project intentionally includes **one lightweight CloudWatch Dashboard** using native EC2 metrics only.
-
-Widgets:
-- CPU Utilization
-- Status Checks
-- Network In
-- Network Out
-
-## ✅ Validation
-
+``` bash
+terraform apply
 ```
+
+Remove the infrastructure:
+
+``` bash
+terraform destroy
+```
+
+------------------------------------------------------------------------
+
+# Configure Docker Swarm
+
+On **Manager1**:
+
+``` bash
+docker swarm init
+```
+
+Display the manager join token:
+
+``` bash
+docker swarm join-token manager
+```
+
+Display the worker join token:
+
+``` bash
+docker swarm join-token worker
+```
+
+Verify the cluster:
+
+``` bash
 docker node ls
-docker service ls
-docker service ps novatech-web
-docker ps
 ```
 
-Capture screenshots before and after each failure, including the CloudWatch Dashboard.
+------------------------------------------------------------------------
 
-## 🎤 Interview Talking Points
+# Skills Demonstrated
 
-- Why three managers?
-- How does quorum work?
-- Difference between container and node failure.
-- Why use native CloudWatch metrics instead of Container Insights?
+-   Terraform
+-   Infrastructure as Code
+-   AWS VPC Design
+-   EC2 Provisioning
+-   Docker Swarm Administration
+-   Linux Administration
+-   Cloud Networking
+-   Amazon CloudWatch Dashboards
 
-## 🎓 Lessons Learned
+------------------------------------------------------------------------
 
-- Design for failure.
-- Automate infrastructure.
-- Keep project scope focused.
-- Native EC2 metrics provide useful operational visibility with minimal complexity.
+# Engineering for Failure
 
-## 📈 Future Enhancements
+This project provides a platform for testing how Docker Swarm responds
+to infrastructure failures. You can stop manager or worker nodes,
+observe quorum behavior, verify workload resiliency, and monitor the
+cluster through CloudWatch metrics. These exercises reinforce high
+availability concepts and operational troubleshooting.
 
-- GitHub Actions
-- Amazon EKS
-- Prometheus
-- Grafana
-- Container Insights
+------------------------------------------------------------------------
 
-## 👤 Author
+# Future Enhancements
 
-**Kevin Harding**  
-Cloud Engineer | DevOps | AWS
+-   Application Load Balancer
+-   Auto Scaling
+-   Private Subnets
+-   NAT Gateway
+-   AWS Systems Manager Session Manager
+-   IAM Least-Privilege Policies
+-   GitHub Actions CI/CD
+-   Prometheus
+-   Grafana
+
+------------------------------------------------------------------------
+
+# Author
+
+**Kevin Harding**
+
+-   GitHub: https://github.com/KHard2bme
+-   LinkedIn: https://www.linkedin.com/in/kevin-harding-ab0a0816
