@@ -67,6 +67,7 @@ including updating package repositories, upgrading installed packages,
 installing Apache2, enabling the Apache service, starting the service,
 and verifying the installation. It showcases Bash scripting and Linux
 automation skills that are transferable across distributions.
+
 ------------------------------------------------------------------------
 # Security
 
