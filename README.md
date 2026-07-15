@@ -32,6 +32,33 @@ terraform/
 ---------------------------------------------------------------------
 # Architecture
 
+```
+Internet
+    │
+Application Load (via Docker Routing Mesh)
+    │
+┌───────────────────────────────────┐
+│        VPC (10.0.0.0/16)          │
+│                                   │
+│  Public Subnet A (us-east-1a)     │
+│  • Manager1                       │
+│  • Manager2                       │
+│  • Worker1                        │
+│                                   │
+│  Public Subnet B (us-east-1b)     │
+│  • Manager3                       │
+│  • Worker2                        │
+└───────────────────────────────────┘
+              │
+      Docker Swarm Cluster
+              │
+      Amazon CloudWatch Dashboard
+      • CPU Utilization
+      • Status Checks
+      • Network In
+      • Network Out
+```
+
 ## AWS Region
 
 -   us-east-1
