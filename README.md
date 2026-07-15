@@ -96,10 +96,11 @@ Each EC2 instance:
 ## docker_install.sh
 
 Executed automatically by Terraform using `user_data`, this script
-prepares each EC2 instance by: - Updating the operating system. -
-Installing Docker. - Enabling and starting the Docker service. - Adding
-the `ec2-user` account to the Docker group. - Installing the Docker
-Compose plugin. - Verifying the Docker installation.
+prepares each EC2 instance by:
+- Updating the operating system.
+- Installing Docker.
+- Enabling and starting the Docker service.
+- Adding the `ec2-user` account to the Docker group.
 
 ## ubuntu_updates.sh
 
