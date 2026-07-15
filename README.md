@@ -62,7 +62,7 @@ Each EC2 instance:
 - Public IP Address
 - Docker installed automatically through `docker_install.sh`
 
- ```
+```
 --------------------------------------------------------------------
 
 # Supporting Scripts
