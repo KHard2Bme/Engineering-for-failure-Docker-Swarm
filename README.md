@@ -101,12 +101,15 @@ This version intentionally does **not** include:
 
 # Repository Structure
 
--   providers.tf
--   variables.tf
--   main.tf
--   outputs.tf
--   docker_install.sh
--   README.md
+terraform/
+├── providers.tf
+├── variables.tf
+├── main.tf
+├── outputs.tf
+│
+└── docker_install.sh
+└── ubuntu_updates.sh
+└── README.md
 
 ------------------------------------------------------------------------
 
