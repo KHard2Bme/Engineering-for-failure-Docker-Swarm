@@ -17,7 +17,9 @@ The environment is intentionally simple, reproducible, and designed as a
 portfolio project that showcases core DevOps engineering skills.
 
 ------------------------------------------------------------------------
-
+```bash
+./triage.sh
+```
 # Repository Structure
 ---
 terraform/
