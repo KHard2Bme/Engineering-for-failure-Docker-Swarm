@@ -22,15 +22,15 @@ portfolio project that showcases core DevOps engineering skills.
 ```
 # Repository Structure
 ---
-terraform/
-├── providers.tf
-├── variables.tf
-├── main.tf
-├── outputs.tf
-│
-└── docker_install.sh
-└── ubuntu_updates.sh
-└── README.md
+   terraform/
+   ├── providers.tf
+   ├── variables.tf
+   ├── main.tf
+   ├── outputs.tf
+   │
+   └── docker_install.sh
+   └── ubuntu_updates.sh
+   └── README.md
 ---
 ---------------------------------------------------------------------
 # Architecture
