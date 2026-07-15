@@ -18,6 +18,19 @@ portfolio project that showcases core DevOps engineering skills.
 
 ------------------------------------------------------------------------
 
+# Repository Structure
+---
+terraform/
+├── providers.tf
+├── variables.tf
+├── main.tf
+├── outputs.tf
+│
+└── docker_install.sh
+└── ubuntu_updates.sh
+└── README.md
+---
+---------------------------------------------------------------------
 # Architecture
 
 ## AWS Region
@@ -33,7 +46,7 @@ portfolio project that showcases core DevOps engineering skills.
 -   Public Route Table
 
 ## EC2 Infrastructure
-
+---
   Instance   Availability Zone   Role
   ---------- ------------------- ---------------
 -   Manager1   us-east-1a          Swarm Manager
@@ -41,10 +54,14 @@ portfolio project that showcases core DevOps engineering skills.
 -   Manager3   us-east-1b          Swarm Manager
 -   Worker1    us-east-1a          Swarm Worker
 -   Worker2    us-east-1b          Swarm Worker
-
-Each EC2 instance: - Amazon Linux 2023 - t2.micro - Public IP Address -
-Docker installed automatically through `docker_install.sh`
-
+---
+---
+Each EC2 instance: 
+- Amazon Linux 2023
+- t2.micro
+- Public IP Address
+- Docker installed automatically through `docker_install.sh`
+---
 ------------------------------------------------------------------------
 
 # Supporting Scripts
@@ -99,17 +116,7 @@ This version intentionally does **not** include:
 
 ------------------------------------------------------------------------
 
-# Repository Structure
 
-terraform/
-├── providers.tf
-├── variables.tf
-├── main.tf
-├── outputs.tf
-│
-└── docker_install.sh
-└── ubuntu_updates.sh
-└── README.md
 
 ------------------------------------------------------------------------
 
