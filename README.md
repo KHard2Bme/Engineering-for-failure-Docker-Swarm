@@ -100,18 +100,18 @@ prepares each EC2 instance by:
 - Updating the operating system.
 - Installing Docker.
 - Enabling and starting the Docker service.
-- Adding the `ec2-user` account to the Docker group.
 
 ## ubuntu_updates.sh
 
-The `ubuntu_updates.sh` script is included as a standalone Linux
+- The `ubuntu_updates.sh` script is included as a standalone Linux
 administration example and is **not** executed as part of the Terraform
 deployment because the infrastructure uses Amazon Linux 2023 rather than
-Ubuntu. The script demonstrates common system administration tasks,
+Ubuntu.
+- The script demonstrates common system administration tasks,
 including updating package repositories, upgrading installed packages,
 installing Apache2, enabling the Apache service, starting the service,
-and verifying the installation. It showcases Bash scripting and Linux
-automation skills that are transferable across distributions.
+and verifying the installation.
+- It showcases Bash scripting and Linux automation skills that are transferable across distributions.
 
 ------------------------------------------------------------------------
 # Security
@@ -135,19 +135,7 @@ A custom Amazon CloudWatch Dashboard provides visibility into:
 -   Network In
 -   Network Out
 
-This version intentionally does **not** include:
-
--   CloudWatch Agent
--   CloudWatch Metric Filters
--   CloudWatch Alarms
--   Amazon SNS
-
 ------------------------------------------------------------------------
-
-
-
-------------------------------------------------------------------------
-
 # Deployment
 
 Initialize Terraform:
@@ -224,20 +212,6 @@ to infrastructure failures. You can stop manager or worker nodes,
 observe quorum behavior, verify workload resiliency, and monitor the
 cluster through CloudWatch metrics. These exercises reinforce high
 availability concepts and operational troubleshooting.
-
-------------------------------------------------------------------------
-
-# Future Enhancements
-
--   Application Load Balancer
--   Auto Scaling
--   Private Subnets
--   NAT Gateway
--   AWS Systems Manager Session Manager
--   IAM Least-Privilege Policies
--   GitHub Actions CI/CD
--   Prometheus
--   Grafana
 
 ------------------------------------------------------------------------
 
