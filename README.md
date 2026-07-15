@@ -36,11 +36,11 @@ portfolio project that showcases core DevOps engineering skills.
 
   Instance   Availability Zone   Role
   ---------- ------------------- ---------------
-  Manager1   us-east-1a          Swarm Manager
-  Manager2   us-east-1a          Swarm Manager
-  Manager3   us-east-1b          Swarm Manager
-  Worker1    us-east-1a          Swarm Worker
-  Worker2    us-east-1b          Swarm Worker
+-   Manager1   us-east-1a          Swarm Manager
+-   Manager2   us-east-1a          Swarm Manager
+-   Manager3   us-east-1b          Swarm Manager
+-   Worker1    us-east-1a          Swarm Worker
+-   Worker2    us-east-1b          Swarm Worker
 
 Each EC2 instance: - Amazon Linux 2023 - t2.micro - Public IP Address -
 Docker installed automatically through `docker_install.sh`
