@@ -17,8 +17,15 @@ The environment is intentionally simple, reproducible, and designed as a
 portfolio project that showcases core DevOps engineering skills.
 
 ------------------------------------------------------------------------
-```bash
-./triage.sh
+```terraform/
+   ├── providers.tf
+   ├── variables.tf
+   ├── main.tf
+   ├── outputs.tf
+   │
+   └── docker_install.sh
+   └── ubuntu_updates.sh
+   └── README.md
 ```
 # Repository Structure
 ---
