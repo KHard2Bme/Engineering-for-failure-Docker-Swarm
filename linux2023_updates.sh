@@ -1,54 +1,62 @@
 #!/bin/bash
 
 #########################################################
-# Ubuntu System Update Script
+# Amazon Linux 2023 System Update Script
 # Author: Kevin Harding
 # Description:
-# Updates Ubuntu packages and installs Apache2
+# Updates Amazon Linux 2023 packages and installs Apache
 #########################################################
+
+set -euxo pipefail
 
 echo "======================================"
 echo "Updating package repository..."
 echo "======================================"
 
-sudo apt-get update
+sudo dnf update -y
 
 echo "======================================"
-echo "Upgrading installed packages..."
+echo "Installing Apache (httpd)..."
 echo "======================================"
 
-sudo apt-get upgrade -y
+sudo dnf install -y httpd
 
 echo "======================================"
-echo "Installing Apache2..."
+echo "Enabling Apache..."
 echo "======================================"
 
-sudo apt-get install -y apache2
+sudo systemctl enable httpd
 
 echo "======================================"
-echo "Enabling Apache2..."
+echo "Starting Apache..."
 echo "======================================"
 
-sudo systemctl enable apache2
+sudo systemctl start httpd
 
 echo "======================================"
-echo "Starting Apache2..."
+echo "Verifying Apache Service..."
 echo "======================================"
 
-sudo systemctl start apache2
-
-echo "======================================"
-echo "Apache2 Status"
-echo "======================================"
-
-sudo systemctl status apache2 --no-pager
+sudo systemctl --no-pager --full status httpd
 
 echo "======================================"
 echo "Apache Version"
 echo "======================================"
 
-apache2 -v
+httpd -v
 
 echo "======================================"
-echo "Script Complete!"
+echo "Operating System"
+echo "======================================"
+
+cat /etc/os-release
+
+echo "======================================"
+echo "Installed Packages"
+echo "======================================"
+
+rpm -q httpd
+
+echo "======================================"
+echo "System update completed successfully!"
 echo "======================================"
