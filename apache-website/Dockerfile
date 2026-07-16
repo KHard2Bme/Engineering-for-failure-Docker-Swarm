@@ -1,0 +1,11 @@
+FROM amazonlinux:2023
+
+RUN dnf update -y && \
+    dnf install -y httpd && \
+    dnf clean all
+
+COPY index.html /var/www/html/index.html
+
+EXPOSE 80
+
+CMD ["/usr/sbin/httpd","-D","FOREGROUND"]
