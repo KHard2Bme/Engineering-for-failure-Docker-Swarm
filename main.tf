@@ -175,10 +175,17 @@ resource "aws_instance" "nodes" {
   vpc_security_group_ids      = [aws_security_group.docker_swarm.id]
   associate_public_ip_address = true
   user_data                   = file("${path.module}/docker_install.sh")
+  user_data_replace_on_change = true
+
+  root_block_device {
+    volume_size           = 20
+    volume_type           = "gp3"
+    delete_on_termination = true
+  }
 
   tags = {
-    Name = each.key
-    Role = startswith(each.key, "Manager") ? "Manager" : "Worker"
+    Name    = each.key
+    Role    = startswith(each.key, "Manager") ? "Manager" : "Worker"
     Project = "Engineering-for-Failure-Docker-Swarm"
   }
 }
