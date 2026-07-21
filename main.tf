@@ -98,56 +98,56 @@ resource "aws_security_group" "docker_swarm" {
   vpc_id      = aws_vpc.main.id
 
   ingress {
-    from_port=22
-    to_port=22
-    protocol="tcp"
-    cidr_blocks=["0.0.0.0/0"]
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
-    from_port=80
-    to_port=80
-    protocol="tcp"
-    cidr_blocks=["0.0.0.0/0"]
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
-    from_port=2377
-    to_port=2377
-    protocol="tcp"
-    cidr_blocks=["10.0.0.0/16"]
+    from_port   = 2377
+    to_port     = 2377
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]
   }
 
   ingress {
-    from_port=7946
-    to_port=7946
-    protocol="tcp"
-    cidr_blocks=["10.0.0.0/16"]
+    from_port   = 7946
+    to_port     = 7946
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]
   }
 
   ingress {
-    from_port=7946
-    to_port=7946
-    protocol="udp"
-    cidr_blocks=["10.0.0.0/16"]
+    from_port   = 7946
+    to_port     = 7946
+    protocol    = "udp"
+    cidr_blocks = ["10.0.0.0/16"]
   }
 
   ingress {
-    from_port=4789
-    to_port=4789
-    protocol="udp"
-    cidr_blocks=["10.0.0.0/16"]
+    from_port   = 4789
+    to_port     = 4789
+    protocol    = "udp"
+    cidr_blocks = ["10.0.0.0/16"]
   }
 
   egress {
-    from_port=0
-    to_port=0
-    protocol="-1"
-    cidr_blocks=["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {
-    Name="docker-swarm-sg"
+    Name = "docker-swarm-sg"
   }
 }
 
@@ -183,6 +183,12 @@ resource "aws_instance" "nodes" {
     delete_on_termination = true
   }
 
+  lifecycle {
+    ignore_changes = [
+      ami
+    ]
+  }
+
   tags = {
     Name    = each.key
     Role    = startswith(each.key, "Manager") ? "Manager" : "Worker"
@@ -200,66 +206,66 @@ resource "aws_cloudwatch_dashboard" "dashboard" {
   dashboard_body = jsonencode({
     widgets = [
       {
-        type="metric"
-        x=0
-        y=0
-        width=12
-        height=6
-        properties={
-          title="CPU Utilization"
-          view="timeSeries"
-          region="us-east-1"
-          metrics=[
+        type   = "metric"
+        x      = 0
+        y      = 0
+        width  = 12
+        height = 6
+        properties = {
+          title  = "CPU Utilization"
+          view   = "timeSeries"
+          region = "us-east-1"
+          metrics = [
             for i in aws_instance.nodes :
-            ["AWS/EC2","CPUUtilization","InstanceId",i.id]
+            ["AWS/EC2", "CPUUtilization", "InstanceId", i.id]
           ]
         }
       },
       {
-        type="metric"
-        x=12
-        y=0
-        width=12
-        height=6
-        properties={
-          title="Status Checks"
-          view="timeSeries"
-          region="us-east-1"
-          metrics=[
+        type   = "metric"
+        x      = 12
+        y      = 0
+        width  = 12
+        height = 6
+        properties = {
+          title  = "Status Checks"
+          view   = "timeSeries"
+          region = "us-east-1"
+          metrics = [
             for i in aws_instance.nodes :
-            ["AWS/EC2","StatusCheckFailed","InstanceId",i.id]
+            ["AWS/EC2", "StatusCheckFailed", "InstanceId", i.id]
           ]
         }
       },
       {
-        type="metric"
-        x=0
-        y=6
-        width=12
-        height=6
-        properties={
-          title="Network In"
-          view="timeSeries"
-          region="us-east-1"
-          metrics=[
+        type   = "metric"
+        x      = 0
+        y      = 6
+        width  = 12
+        height = 6
+        properties = {
+          title  = "Network In"
+          view   = "timeSeries"
+          region = "us-east-1"
+          metrics = [
             for i in aws_instance.nodes :
-            ["AWS/EC2","NetworkIn","InstanceId",i.id]
+            ["AWS/EC2", "NetworkIn", "InstanceId", i.id]
           ]
         }
       },
       {
-        type="metric"
-        x=12
-        y=6
-        width=12
-        height=6
-        properties={
-          title="Network Out"
-          view="timeSeries"
-          region="us-east-1"
-          metrics=[
+        type   = "metric"
+        x      = 12
+        y      = 6
+        width  = 12
+        height = 6
+        properties = {
+          title  = "Network Out"
+          view   = "timeSeries"
+          region = "us-east-1"
+          metrics = [
             for i in aws_instance.nodes :
-            ["AWS/EC2","NetworkOut","InstanceId",i.id]
+            ["AWS/EC2", "NetworkOut", "InstanceId", i.id]
           ]
         }
       }
