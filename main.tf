@@ -26,7 +26,7 @@ data "aws_ami" "amazon_linux" {
 ############################
 
 resource "aws_vpc" "main" {
-  cidr_block           = "10.0.0.0/16"
+  cidr_block           = var.vpc_cidr
   enable_dns_support   = true
   enable_dns_hostnames = true
 
@@ -169,11 +169,12 @@ resource "aws_instance" "nodes" {
   for_each = local.instances
 
   ami                         = data.aws_ami.amazon_linux.id
-  instance_type               = "t2.micro"
+  instance_type               = var.instance_type
   subnet_id                   = each.value.subnet
   key_name                    = var.key_name
   vpc_security_group_ids      = [aws_security_group.docker_swarm.id]
   associate_public_ip_address = true
+  iam_instance_profile = aws_iam_instance_profile.cloudwatch_profile.name
   user_data                   = file("${path.module}/docker_install.sh")
   user_data_replace_on_change = true
 
