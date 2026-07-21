@@ -174,7 +174,6 @@ resource "aws_instance" "nodes" {
   key_name                    = var.key_name
   vpc_security_group_ids      = [aws_security_group.docker_swarm.id]
   associate_public_ip_address = true
-  iam_instance_profile = aws_iam_instance_profile.cloudwatch_profile.name
   user_data                   = file("${path.module}/docker_install.sh")
   user_data_replace_on_change = true
 
