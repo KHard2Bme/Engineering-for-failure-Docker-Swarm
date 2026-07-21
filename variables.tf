@@ -60,3 +60,9 @@ variable "dashboard_name" {
   type        = string
   default     = "EngineeringForFailureDashboard"
 }
+
+variable "project_name" {
+  description = "Project name used for resource naming"
+  type        = string
+  default     = "engineering-for-failure"
+}
