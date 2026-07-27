@@ -12,45 +12,53 @@ resource "aws_cloudwatch_log_group" "docker_logs" {
   }
 }
 
+############################################################
+# Container Failure Metric Filter
+############################################################
+
 resource "aws_cloudwatch_log_metric_filter" "container_failure" {
-  name           = "ContainerFailureCount"
+  name           = "ContainerFailureFilter"
   log_group_name = aws_cloudwatch_log_group.docker_logs.name
 
-  # Matches common Docker/container failure messages
-  pattern = "?ERROR ?Failed ?failed ?exited ?OOMKilled"
+  pattern = "ContainerFailure"
 
   metric_transformation {
     name      = "ContainerFailureCount"
     namespace = "EngineeringForFailure"
     value     = "1"
-    unit      = "Count"
   }
 }
 
-resource "aws_cloudwatch_log_metric_filter" "worker_failure" {
-  name           = "WorkerNodeFailureCount"
+############################################################
+# Worker Node Failure Metric Filter
+############################################################
+
+resource "aws_cloudwatch_log_metric_filter" "worker_node_failure" {
+  name           = "WorkerNodeFailureFilter"
   log_group_name = aws_cloudwatch_log_group.docker_logs.name
 
-  pattern = "?node ?unreachable ?docker.service ?Failed"
+  pattern = "WorkerNodeFailure"
 
   metric_transformation {
     name      = "WorkerNodeFailureCount"
     namespace = "EngineeringForFailure"
     value     = "1"
-    unit      = "Count"
   }
 }
 
-resource "aws_cloudwatch_log_metric_filter" "manager_failure" {
-  name           = "ManagerNodeFailureCount"
+############################################################
+# Manager Node Failure Metric Filter
+############################################################
+
+resource "aws_cloudwatch_log_metric_filter" "manager_node_failure" {
+  name           = "ManagerNodeFailureFilter"
   log_group_name = aws_cloudwatch_log_group.docker_logs.name
 
-  pattern = "?raft ?quorum ?leader ?manager"
+  pattern = "ManagerNodeFailure"
 
   metric_transformation {
     name      = "ManagerNodeFailureCount"
     namespace = "EngineeringForFailure"
     value     = "1"
-    unit      = "Count"
   }
 }
