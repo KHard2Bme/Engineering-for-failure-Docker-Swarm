@@ -34,3 +34,39 @@ resource "aws_iam_instance_profile" "cloudwatch_agent_profile" {
   name = "${var.project_name}-cloudwatch-agent-profile"
   role = aws_iam_role.cloudwatch_agent_role.name
 }
+
+############################################
+# Additional CloudWatch permissions
+############################################
+
+resource "aws_iam_role_policy" "cloudwatch_dashboard_policy" {
+  name = "${var.project_name}-cloudwatch-dashboard-policy"
+  role = aws_iam_role.cloudwatch_agent_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+
+    Statement = [
+      {
+        Effect = "Allow"
+
+        Action = [
+          "cloudwatch:GetDashboard",
+          "cloudwatch:PutDashboard",
+          "cloudwatch:ListDashboards",
+          "cloudwatch:DeleteDashboards",
+
+          "cloudwatch:DescribeAlarms",
+          "cloudwatch:PutMetricAlarm",
+          "cloudwatch:DeleteAlarms",
+
+          "logs:DescribeLogGroups",
+          "logs:DescribeMetricFilters",
+          "logs:PutMetricFilter"
+        ]
+
+        Resource = "*"
+      }
+    ]
+  })
+}
