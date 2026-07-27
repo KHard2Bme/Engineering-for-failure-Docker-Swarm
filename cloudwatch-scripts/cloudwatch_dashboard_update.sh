@@ -13,7 +13,7 @@
 
 set -euo pipefail
 
-DASHBOARD_NAME="${1:-EngineeringForFailureDashboard}"
+DASHBOARD_NAME="${1:-EngineeringForFailure}"
 TMP_JSON="dashboard.json"
 
 command -v aws >/dev/null 2>&1 || { echo "ERROR: aws CLI not installed."; exit 1; }
