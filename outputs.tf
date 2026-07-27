@@ -74,11 +74,10 @@ output "container_failure_metric" {
 
 output "worker_failure_metric" {
   description = "Worker node failure metric filter"
-  value       = aws_cloudwatch_log_metric_filter.worker_failure.name
+  value       = aws_cloudwatch_log_metric_filter.worker_node_failure.name
 }
 
 output "manager_failure_metric" {
   description = "Manager node failure metric filter"
-  value       = aws_cloudwatch_log_metric_filter.manager_failure.name
+  value       = aws_cloudwatch_log_metric_filter.manager_node_failure.name
 }
-
