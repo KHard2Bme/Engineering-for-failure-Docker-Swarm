@@ -1,223 +1,423 @@
-# Engineering for Failure: Docker Swarm on AWS with Terraform
+# 🚀 Engineering for Failure: Highly Available Docker Swarm Cluster on AWS with Terraform
 
-![AWS](https://img.shields.io/badge/AWS-EC2-FF9900?logo=amazonaws&logoColor=white)
+![AWS](https://img.shields.io/badge/AWS-EC2%20%7C%20IAM%20%7C%20CloudWatch-FF9900?logo=amazonaws&logoColor=white)
 ![Terraform](https://img.shields.io/badge/Terraform-IaC-623CE4?logo=terraform&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Swarm-2496ED?logo=docker&logoColor=white)
-![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04-E95420?logo=ubuntu&logoColor=white)
-![Linux](https://img.shields.io/badge/Linux-Bash-FCC624?logo=linux&logoColor=black)
-![GitHub](https://img.shields.io/badge/GitHub-Version_Control-181717?logo=github&logoColor=white)
-![CloudWatch](https://img.shields.io/badge/Amazon_CloudWatch-Monitoring-FF4F8B)
+![Amazon Linux](https://img.shields.io/badge/Amazon%20Linux-2023-FCC624?logo=linux&logoColor=black)
+![CloudWatch](https://img.shields.io/badge/Amazon-CloudWatch-FF4F8B)
+![Bash](https://img.shields.io/badge/Bash-Scripting-4EAA25?logo=gnubash&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-blue)
 
-## Overview
+---
 
-This project provisions a five-node Docker Swarm cluster on AWS using
-Terraform to demonstrate Infrastructure as Code (IaC), AWS networking,
-Linux administration, Docker orchestration, and CloudWatch monitoring.
-The environment is intentionally simple, reproducible, and designed as a
-portfolio project that showcases core DevOps engineering skills.
+# Overview
 
-------------------------------------------------------------------------
+This project demonstrates how to build a **production-style highly available Docker Swarm cluster on AWS** using **Terraform** while implementing **real-world failure engineering** and **production observability**.
+
+The infrastructure is provisioned entirely with **Terraform**, Docker is automatically installed on every EC2 instance, a custom Apache website is containerized and published to Docker Hub, and Amazon CloudWatch provides centralized monitoring using custom logs, metric filters, alarms, and dashboards.
+
+The project intentionally simulates failures to validate Docker Swarm's self-healing capabilities and operational resilience.
+
+---
+
+# Project Goals
+
+- Provision the entire AWS infrastructure using Terraform
+- Automatically install Docker on every EC2 instance
+- Configure Amazon Linux 2023
+- Build a custom Docker image
+- Publish the image to Docker Hub
+- Pull and deploy the image across Docker Swarm
+- Serve a custom Apache website
+- Build and validate a highly available Swarm cluster
+- Add production-style CloudWatch monitoring
+- Simulate real production failures
+- Validate Docker Swarm self-healing
+
+---
+
+# Technology Stack
+
+- AWS EC2
+- AWS IAM
+- AWS CloudWatch
+- Terraform
+- Docker
+- Docker Swarm
+- Docker Hub
+- Amazon Linux 2023
+- Bash
+
+---
+
 # Repository Structure
-```
+
+```text
 terraform/
-   ├── providers.tf
-   ├── variables.tf
-   ├── main.tf
-   ├── outputs.tf
-   │
-   └── docker_install.sh
-   └── ubuntu_updates.sh
-   └── README.md
+│
+├── main.tf
+├── cloudwatch.tf
+├── iam.tf
+├── providers.tf
+├── variables.tf
+├── outputs.tf
+├── docker_install.sh
+└── linux2023_updates.sh
+
+docker custom image/
+│
+├── Dockerfile
+└── index.html
+
+cloudwatch scripts/
+│
+├── cloudwatch_install.sh
+├── cloudwatch-agent-config.json
+├── cloudwatch_dashboard_update.sh
+└── docker_event_monitor.sh
+
+README.md
 ```
----------------------------------------------------------------------
+
+---
+
 # Architecture
 
-```
-Internet
-    │
-Application Load (via Docker Routing Mesh)
-    │
-┌───────────────────────────────────┐
-│        VPC (10.0.0.0/16)          │
-│                                   │
-│  Public Subnet A (us-east-1a)     │
-│  • Manager1                       │
-│  • Manager2                       │
-│  • Worker1                        │
-│                                   │
-│  Public Subnet B (us-east-1b)     │
-│  • Manager3                       │
-│  • Worker2                        │
-└───────────────────────────────────┘
-              │
-      Docker Swarm Cluster
-              │
-      Amazon CloudWatch Dashboard
-      • CPU Utilization
-      • Status Checks
-      • Network In
-      • Network Out
+```text
+                     Terraform
+                         │
+                         ▼
+               AWS Infrastructure
+                         │
+         ┌───────────────┴───────────────┐
+         │                               │
+   3 Manager Nodes                 2 Worker Nodes
+         │                               │
+         └──────── Docker Swarm ─────────┘
+                      │
+             Custom Apache Website
+                      │
+               Docker Hub Repository
+                      │
+             CloudWatch Agent
+                      │
+             CloudWatch Logs
+                      │
+             Metric Filters
+                      │
+         CloudWatch Dashboard
 ```
 
-## AWS Region
+---
 
--   us-east-1
+# Infrastructure Deployment
 
-## Networking
+Terraform provisions:
 
--   VPC: 10.0.0.0/16
--   Public Subnet A: 10.0.1.0/24 (us-east-1a)
--   Public Subnet B: 10.0.2.0/24 (us-east-1b)
--   Internet Gateway
--   Public Route Table
+- VPC
+- Public Subnets
+- Security Groups
+- IAM Roles
+- IAM Instance Profiles
+- Five EC2 Instances
+- CloudWatch Resources
 
-## EC2 Infrastructure
+---
 
+# Automated Instance Configuration
+
+Each EC2 instance automatically executes:
+
+## docker_install.sh
+
+- Installs Docker
+- Starts Docker
+- Enables Docker at boot
+- Adds ec2-user to Docker group
+
+## linux2023_updates.sh
+
+- Updates Amazon Linux 2023
+- Installs required utilities
+- Configures the operating system
+
+---
+
+# Building the Docker Image
+
+The project includes a custom Apache website.
+
+Dockerfile
+
+- Apache base image
+- Custom index.html
+- Port 80 exposed
+
+Commands:
+
+```bash
+docker build -t kevd637/apache-website:v1 .
+docker push kevd637/apache-website:v1
 ```
-Instance   Availability Zone      Role
-  ---------- ------------------- ---------------
-   Manager1   us-east-1a          Swarm Manager
-   Manager2   us-east-1a          Swarm Manager
-   Manager3   us-east-1b          Swarm Manager
-   Worker1    us-east-1a          Swarm Worker
-   Worker2    us-east-1b          Swarm Worker
 
+---
+
+# Docker Swarm
+
+Cluster configuration
+
+- Manager1
+- Manager2 (Leader)
+- Manager3
+- Worker1
+- Worker2
+
+The website is deployed as a replicated Docker Swarm service.
+
+---
+
+# CloudWatch Monitoring
+
+CloudWatch monitors:
+
+- Container failures
+- Worker node failures
+- Worker node recovery
+- Manager node failures
+- Manager node recovery
+
+Monitoring pipeline
+
+```text
+Docker Events
+      │
+docker_event_monitor.sh
+      │
+/var/log/docker-events.log
+      │
+CloudWatch Agent
+      │
+CloudWatch Logs
+      │
+Metric Filters
+      │
+CloudWatch Dashboard
 ```
-Each EC2 instance: 
-- Amazon Linux 2023
-- t2.micro
-- Public IP Address
-- Docker installed automatically through `docker_install.sh`
 
---------------------------------------------------------------------
+---
 
 # Supporting Scripts
 
 ## docker_install.sh
 
-Executed automatically by Terraform using `user_data`, this script
-prepares each EC2 instance by:
-- Updating the operating system.
-- Installing Docker.
-- Enabling and starting the Docker service.
+Automatically installs Docker.
 
-## ubuntu_updates.sh
+## linux2023_updates.sh
 
-- The `ubuntu_updates.sh` script is included as a standalone Linux
-administration example and is **not** executed as part of the Terraform
-deployment because the infrastructure uses Amazon Linux 2023 rather than
-Ubuntu.
-- The script demonstrates common system administration tasks,
-including updating package repositories, upgrading installed packages,
-installing Apache2, enabling the Apache service, starting the service,
-and verifying the installation.
-- It showcases Bash scripting and Linux automation skills that are transferable across distributions.
+Updates Amazon Linux 2023.
 
-------------------------------------------------------------------------
-# Security
+## cloudwatch_install.sh
 
-The security group allows:
+Installs the CloudWatch Agent.
 
--   TCP 22 (SSH)
--   TCP 80 (HTTP)
--   TCP 2377 (Docker Swarm Management)
--   TCP/UDP 7946 (Cluster Communication)
--   UDP 4789 (Overlay Networking)
+## cloudwatch-agent-config.json
 
-------------------------------------------------------------------------
+Configures CloudWatch log collection.
 
-# Monitoring
+## docker_event_monitor.sh
 
-A custom Amazon CloudWatch Dashboard provides visibility into:
+Monitors Docker events including:
 
--   CPU Utilization
--   Status Checks
--   Network In
--   Network Out
+- ContainerFailure
+- WorkerNodeFailure
+- WorkerNodeRecovered
+- ManagerNodeFailure
+- ManagerNodeRecovered
 
-------------------------------------------------------------------------
-# Deployment
+## cloudwatch_dashboard_update.sh
 
-Initialize Terraform:
+Creates and updates CloudWatch dashboards.
 
-``` bash
-terraform init
+---
+
+# Validation Testing
+
+## Phase 1 – Primary Failure Scenarios
+
+### Container Failure
+
+Purpose
+
+Validate container monitoring.
+
+Action
+
+Stop a running container.
+
+Expected Result
+
+- ContainerFailure logged
+- CloudWatch metric updated
+- Dashboard updated
+
+---
+
+### Worker Node Failure
+
+Purpose
+
+Validate worker failure detection.
+
+Action
+
+```bash
+sudo systemctl stop docker
 ```
 
-Review the execution plan:
+Expected Result
 
-``` bash
-terraform plan
+- WorkerNodeFailure logged
+- Swarm reschedules containers
+- Dashboard updated
+
+---
+
+### Manager Node Failure
+
+Purpose
+
+Validate manager failure detection.
+
+Action
+
+```bash
+sudo systemctl stop docker
 ```
 
-Deploy the infrastructure:
+Expected Result
 
-``` bash
-terraform apply
+- ManagerNodeFailure logged
+- Cluster maintains quorum
+- Dashboard updated
+
+---
+
+# Phase 2 – Operational Maintenance
+
+## Drain Worker Node
+
+Purpose
+
+Gracefully remove a worker from scheduling.
+
+Expected Result
+
+Tasks migrate automatically.
+
+---
+
+## Drain Manager Node
+
+Purpose
+
+Perform manager maintenance.
+
+Expected Result
+
+Leader election maintained.
+
+---
+
+## Reboot Worker Node
+
+Purpose
+
+Validate node recovery.
+
+Expected Result
+
+Worker rejoins Swarm after reboot.
+
+---
+
+## Restart Docker Service
+
+Purpose
+
+Simulate planned maintenance.
+
+Action
+
+```bash
+sudo systemctl stop docker
+sudo systemctl start docker
 ```
 
-Remove the infrastructure:
+Expected Result
 
-``` bash
-terraform destroy
-```
+- WorkerNodeFailure
+- WorkerNodeRecovered
 
-------------------------------------------------------------------------
+Service availability maintained.
 
-# Configure Docker Swarm
-
-On **Manager1**:
-
-``` bash
-docker swarm init
-```
-
-Display the manager join token:
-
-``` bash
-docker swarm join-token manager
-```
-
-Display the worker join token:
-
-``` bash
-docker swarm join-token worker
-```
-
-Verify the cluster:
-
-``` bash
-docker node ls
-```
-
-------------------------------------------------------------------------
+---
 
 # Skills Demonstrated
 
--   Terraform
--   Infrastructure as Code
--   AWS VPC Design
--   EC2 Provisioning
--   Docker Swarm Administration
--   Linux Administration
--   Cloud Networking
--   Amazon CloudWatch Dashboards
+- Infrastructure as Code
+- Terraform
+- AWS
+- Docker
+- Docker Swarm
+- Docker Hub
+- Linux Administration
+- Bash Automation
+- Amazon CloudWatch
+- Custom Metrics
+- Metric Filters
+- CloudWatch Dashboards
+- Observability
+- High Availability
+- Incident Response
+- Failure Engineering
+- Troubleshooting
 
-------------------------------------------------------------------------
+---
 
-# Engineering for Failure
+# Lessons Learned
 
-This project provides a platform for testing how Docker Swarm responds
-to infrastructure failures. You can stop manager or worker nodes,
-observe quorum behavior, verify workload resiliency, and monitor the
-cluster through CloudWatch metrics. These exercises reinforce high
-availability concepts and operational troubleshooting.
+- Infrastructure as Code provides repeatable deployments.
+- Docker Swarm automatically redistributes workloads.
+- CloudWatch custom metrics provide excellent operational visibility.
+- Monitoring both infrastructure and applications is essential.
+- Failure testing validates production readiness.
+- Planned maintenance is just as important as unexpected failures.
 
-------------------------------------------------------------------------
+---
+
+# Future Enhancements
+
+- Deploy behind an AWS Application Load Balancer
+- Configure docker_event_monitor.sh as a systemd service
+- Add CloudWatch alarms with Amazon SNS notifications
+- Integrate Prometheus
+- Integrate Grafana
+- Implement GitHub Actions CI/CD
+- Add rolling deployments
+- Add blue/green deployments
+
+---
 
 # Author
 
 **Kevin Harding**
 
--   GitHub: https://github.com/KHard2bme
--   LinkedIn: https://www.linkedin.com/in/kevin-harding-ab0a0816
+Marine Corps Veteran
+
+AWS Certified Solutions Architect – Associate
+
+Cloud / DevOps Engineer
+
+---
+
+## If you found this project useful, please consider giving it a ⭐ on GitHub!
