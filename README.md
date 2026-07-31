@@ -140,6 +140,7 @@ Each EC2 instance automatically executes:
 - Updates Amazon Linux 2023
 - Installs required utilities
 - Configures the operating system
+- installs Apache 2 Web Server
 
 ---
 
@@ -214,7 +215,7 @@ Automatically installs Docker.
 
 ## linux2023_updates.sh
 
-Updates Amazon Linux 2023.
+Updates Amazon Linux 2023 and installs Apache 2 web server.
 
 ## cloudwatch_install.sh
 
