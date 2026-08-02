@@ -12,11 +12,15 @@
 
 # Overview
 
-This project demonstrates how to build a **production-style highly available Docker Swarm cluster on AWS** using **Terraform** while implementing **real-world failure engineering** and **production observability**.
+This project demonstrates how to build a production-ready, self-healing container platform on AWS using Terraform, Docker Swarm, and Amazon CloudWatch. The primary objective was to design an environment capable of automatically recovering from failures while providing the observability needed to monitor, troubleshoot, and validate system health.
 
-The infrastructure is provisioned entirely with **Terraform**, Docker is automatically installed on every EC2 instance, a custom Apache website is containerized and published to Docker Hub, and Amazon CloudWatch provides centralized monitoring using custom logs, metric filters, alarms, and dashboards.
+The infrastructure is provisioned entirely with Terraform, with Docker automatically installed and configured on every Amazon EC2 instance through EC2 User Data. A custom Apache website is containerized, published to Docker Hub, and deployed as a replicated Docker Swarm service across a highly available cluster.
 
-The project intentionally simulates failures to validate Docker Swarm's self-healing capabilities and operational resilience.
+To provide production-style observability, Amazon CloudWatch is integrated with custom log collection, metric filters, dashboards, and a custom Bash monitoring script that tracks container failures, worker node failures, and manager node failures in near real time.
+
+The platform is then intentionally subjected to both failure engineering and operational maintenance scenarios—including container failures, worker and manager node failures, node draining, worker reboots, and Docker service restarts—to validate Docker Swarm's self-healing capabilities, operational resilience, and monitoring effectiveness.
+
+This project demonstrates practical experience with Infrastructure as Code (IaC), container orchestration, cloud infrastructure, Linux administration, automation, observability, and high-availability design principles commonly used in production DevOps and Platform Engineering environments.
 
 ---
 
