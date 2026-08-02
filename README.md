@@ -1,4 +1,4 @@
-# 🚀 Engineering for Failure: Highly Available Docker Swarm Cluster on AWS with Terraform
+# 🚀 Engineering for Failure: Building a Production-Ready Self-Healing Container Platform on AWS with Terraform, Docker Swarm, and Amazon CloudWatch
 
 ![AWS](https://img.shields.io/badge/AWS-EC2%20%7C%20IAM%20%7C%20CloudWatch-FF9900?logo=amazonaws&logoColor=white)
 ![Terraform](https://img.shields.io/badge/Terraform-IaC-623CE4?logo=terraform&logoColor=white)
